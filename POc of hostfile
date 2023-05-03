@@ -1,0 +1,23 @@
+---
+- name: Sync myhost.txt with tmphost
+  connection: local
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+   - /home/tanvirali/ansible_playbooks/variable_file/variables.yml
+
+  tasks:
+    - name: Check if myhost.txt exists
+      stat:
+        path: "{{ source_file_path }}"
+      register: source_file_status
+
+    - name: Fail if myhost.txt does not exist
+      fail:
+        msg: "Source file myhost.txt does not exist!"
+      when: not source_file_status.stat.exists
+
+    - name: Copy source file to destination
+      copy:
+        src: "{{ source_file_path }}"
+        dest: "{{ destination_file_path }}"
